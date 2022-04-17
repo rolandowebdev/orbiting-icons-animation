@@ -8,7 +8,7 @@ body {
 
 .orbit {
   --size: 12rem;
-  --speed: 120s;
+  --speed: 40s;
   .center-image {
     width: var(--size);
     position: relative;
@@ -37,9 +37,7 @@ body {
     animation: orbit var(--speed) linear infinite;
     &:hover {
       animation-play-state: paused;
-      & * {
-        animation-play-state: paused;
-      }
+      --orbit-play-state: paused;
     }
   }
   li {
@@ -56,29 +54,30 @@ body {
     text-align: center;
     transform-origin: center;
     line-height: 1;
-    &>* {
-      position: absolute;
-      animation: orbit var(--speed) linear reverse infinite, scaling 2s ease infinite alternate var(--scaling-delay, 100ms);
-      @for $i from 0 through 7 {
-        &:nth-child(#{$i}) {
-          animation-delay: var(--scaling-delay, 100ms) * #{$i};
-        }
+    &:hover {
+      --scaling-play-state: paused;
+    }
+    @for $i from 0 through 7 {
+      &:nth-child(#{$i + 1}) {
+        --scaling-delay: #{500ms * ($i/2)};
       }
     }
-    >div {
+    &>* {
       display: grid;
       place-items: center;
-      height: 100%;
       width: 100%;
+      height: 100%;
+      position: absolute;
+      border-radius: inherit;
+      animation: orbit var(--speed) linear reverse infinite, scaling 1s var(--scaling-delay) ease infinite alternate;
+      animation-play-state: var(--orbit-play-state, running), var(--scaling-play-state, running);
+    }
+    >div {
       background-color: var(--icon-bg);
       border-radius: inherit;
     }
     >p {
-      display: grid;
-      place-items: center;
       background: var(--text-bg);
-      width: 100%;
-      height: 100%;
       opacity: 0;
       transition: opacity 500ms;
     }
@@ -136,6 +135,6 @@ body {
 
 @keyframes scaling {
   100% {
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
 }
